@@ -1,24 +1,50 @@
 from django.shortcuts import render
+from django.contrib import messages
 import requests
 import datetime
-# Create your views here.
+
 
 def home(request):
+   
     if 'city' in request.POST:
-        city=request.POST['city']
+         city = request.POST['city']
     else:
-        city='Dehradun'
+         city = 'indore'     
+    
+    url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid=8f1f6a7f69fd19bd2bd26929f40b1278'
+    PARAMS = {'units':'metric'}
 
-    url=f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid=8f1f6a7f69fd19bd2bd26929f40b1278'
-    PARAMS={'units':'metric'}
-    data=requests.get(url,PARAMS).json()
+    API_KEY =  ' AIzaSyAopv0vflyhJ_jlvikN_62NWNPQrAvLXDw '
 
-    description=data['weather'][0]['description']
-    icon= data['weather'][0]['icon']
-    temp=data['main']['temp']
+    SEARCH_ENGINE_ID = '06916a33b618b4ddc'
+     
+    query = city + " 1920x1080"
+    page = 1
+    start = (page - 1) * 10 + 1
+    searchType = 'image'
+    city_url = f"https://www.googleapis.com/customsearch/v1?key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}&start={start}&searchType={searchType}&imgSize=xlarge"
 
-    day=datetime.date.today()
+    data = requests.get(city_url).json()
+    count = 1
+    search_items = data.get("items")
+    image_url = search_items[1]['link']
+    
 
+    try:
+          
+          data = requests.get(url,params=PARAMS).json()
+          description = data['weather'][0]['description']
+          icon = data['weather'][0]['icon']
+          temp = data['main']['temp']
+          day = datetime.date.today()
 
-    return render(request,'weatherapp/index.html',{'description':description,'icon':icon,'temp':temp,'city':city,'day':day}) 
-
+          return render(request,'weatherapp/index.html' , {'description':description , 'icon':icon ,'temp':temp , 'day':day , 'city':city , 'exception_occurred':False ,'image_url':image_url})
+    
+    except KeyError:
+          exception_occurred = True
+          messages.error(request,'Entered data is not available to API')   
+          day = datetime.date.today()
+          return render(request,'weatherapp/index.html' ,{'description':'clear sky', 'icon':'01d'  ,'temp':25 , 'day':day , 'city':'Dehradun' , 'exception_occurred':exception_occurred } )
+               
+    
+    
