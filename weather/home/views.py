@@ -9,14 +9,14 @@ def home(request):
     if 'city' in request.POST:
          city = request.POST['city']
     else:
-         city = 'indore'     
+         city = 'Dehradun'     
     
-    url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid=8f1f6a7f69fd19bd2bd26929f40b1278'
+    url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid='
     PARAMS = {'units':'metric'}
 
-    API_KEY =  ' AIzaSyAopv0vflyhJ_jlvikN_62NWNPQrAvLXDw '
+    API_KEY =  ''
 
-    SEARCH_ENGINE_ID = '06916a33b618b4ddc'
+    SEARCH_ENGINE_ID = ''
      
     query = city + " 1920x1080"
     page = 1
